@@ -28,8 +28,5 @@ THE SOFTWARE.
 */
 #include <math.h>
 
-
-
-
-
-
+void aWeighting(float * f, float * a ,int Len, float * rms,int fftn );
+void aWeightingPreComp(float * f,int fftn);
