@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   processInWindows.hpp
  * Author: ags056
  *
@@ -38,7 +38,7 @@ extern "C" {
     void computeMFCCs(float *windowIn, int N, int Fs,float *mfcc);
 ////
 }
-void loadWav(char * inFilename, char * outFilename,char *treeDir,float ,int frameAve,float thresh);
+void loadWav(char* inFilename, char* outFilename, char* treeDir, float gain ,int frameAve,float thresh);
 #include  "DecisionTreeClass.hpp"
 
 #define WIN_N 1024
@@ -46,5 +46,3 @@ void loadWav(char * inFilename, char * outFilename,char *treeDir,float ,int fram
 //
 
 #endif	/* PROCESSINWINDOWS_HPP */
-
-

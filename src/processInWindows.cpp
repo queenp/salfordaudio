@@ -19,8 +19,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 
-
 #include "processInWindows.hpp"
+#include <string>
+#include <emscripten/bind.h>
 
 struct wavfile {
     char id[4]; // should always contain "RIFF"
@@ -38,7 +39,7 @@ struct wavfile {
 
 static struct wavfile header;
 
-void loadWav(char * filename, char * outFilename, char *treeDir, float gain, int frameAve,float thresh) {
+void loadWav(char* filename, char* outFilename, char* treeDir, float gain, int frameAve,float thresh) {
     char str1[100], str2[100];
     FILE * pFile;
 
@@ -52,7 +53,7 @@ void loadWav(char * filename, char * outFilename, char *treeDir, float gain, int
     printf("\nDone");
 
     //http://www.sonicspot.com/guide/wavefiles.html
-    //http://yannesposito.com/Scratch/en/blog/2010-10-14-Fun-with-wav/char 
+    //http://yannesposito.com/Scratch/en/blog/2010-10-14-Fun-with-wav/char
     //char  filename[]="test16S.wav";
     //char  filename[]="iphone1.wav";
 
@@ -82,7 +83,7 @@ void loadWav(char * filename, char * outFilename, char *treeDir, float gain, int
         fprintf(stderr, "Input must be sampled at 44100 Hz \n");
         exit(1);
     }
-    // Skip though rest of header to find data 
+    // Skip though rest of header to find data
     char datahead[4];
     int32_t datasize;
     int skip = 0;
@@ -96,7 +97,7 @@ void loadWav(char * filename, char * outFilename, char *treeDir, float gain, int
         }
     }
 
-    // read data header 
+    // read data header
     // printf("should say data %.*s\n", 4, datahead);
     fread(&datasize, sizeof (int32_t), 1, wav);
 
@@ -313,7 +314,7 @@ void loadWav(char * filename, char * outFilename, char *treeDir, float gain, int
 
 
 
-        //printf("%f %f %f %f %f \n", t, dBA, 
+        //printf("%f %f %f %f %f \n", t, dBA,
         //       level,snr, comb);
         counter++;
     }
@@ -328,7 +329,7 @@ void loadWav(char * filename, char * outFilename, char *treeDir, float gain, int
     avecomb = avecomb / counter;
     aveAveSNR = aveAveSNR / counter;
     aveAveLevel = aveAveLevel / counter;
-    
+
      // remove(outFilename);
 
     FILE * pFile2;
@@ -361,7 +362,7 @@ void loadWav(char * filename, char * outFilename, char *treeDir, float gain, int
     ///////////////////////////// Find contiguous regions without wind noise
     fclose(pFile);
     pFile = fopen(str2, "r");
-    int clean = 1; // 
+    int clean = 1; //
     int initialised = 0;
     int first = 0;
     float win = 0;
@@ -371,7 +372,7 @@ void loadWav(char * filename, char * outFilename, char *treeDir, float gain, int
     while (fgets(mystring, sizeof (mystring), pFile) != NULL) {
 
         float dBA, t, level, snr, comb;
-        
+
         sscanf(mystring, "%f %f %f %f %f", &t, &dBA,
                 &level, &snr, &comb);
                float x=snr;
@@ -379,7 +380,7 @@ void loadWav(char * filename, char * outFilename, char *treeDir, float gain, int
         if (comb==0)
             qual=100;
     comb=100-qual;
-        
+
         if (comb >= thresh && clean == 1 && initialised == 1 && first == 1) // previous frame was clean now its windy
         {
             fprintf(pFile2, "%0.2f\t%0.2f\n", start, t - win * 2);
@@ -415,3 +416,17 @@ void loadWav(char * filename, char * outFilename, char *treeDir, float gain, int
 
 }
 
+using namespace emscripten;
+
+void WEB_loadWav(std::string inFilename, std::string outFilename, std::string treeDir, float gain ,int frameAve,float thresh) {
+  std::vector<char> outF(outFilename.begin(), outFilename.end());
+  outF.push_back('\0');
+  std::vector<char> inF(inFilename.begin(), inFilename.end());
+  inF.push_back('\0');
+  std::vector<char>treeD(treeDir.begin(), treeDir.end());
+  loadWav(&inF[0], &outF[0], &treeD[0], gain, frameAve, thresh);
+}
+
+EMSCRIPTEN_BINDINGS(libs) {
+  function("loadWav", &WEB_loadWav);
+}

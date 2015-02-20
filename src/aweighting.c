@@ -23,6 +23,7 @@ THE SOFTWARE.
 *///
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 //#import "Helper.h"
 static float *AWfun;
@@ -43,7 +44,7 @@ void aWeighting(float * f, float * a ,int Len, float * rms,int fftn )
 //double f4 = 12194;// % Hz
 //double f1000 = 1000;
 //    double freq;
-    
+
 //double W1000 = (pow(f4,2)) * (pow(f1000,4)) / ((pow(f1000,2) + pow(f1,2)) * sqrt(pow(f1000,2) + pow(f2,2)) *
   //                                                                            sqrt(pow(f1000,2) + pow(f3,2)) * (pow(f1000,2) + pow(f4,2)));
     float P=0;
@@ -74,7 +75,7 @@ void aWeightingPreComp(float * f,int fftn)
     //%
     //% Evaluates A weighting in dB for each frequency in f
     //% according to equation in ISO EN 61672-1:2003
-    
+
     //% constants (section 5.4.11)
     float f1 = 20.60; //% Hz
     float f2 = 107.7; //% Hz
@@ -91,7 +92,7 @@ void aWeightingPreComp(float * f,int fftn)
     int i;
     for ( i=1;i<fftn;i++)
     {
-        
+
         freq=f[i];
         AWfun[i] = (pow(f4,2)) * (pow(freq,4)) / ((pow(freq,2) + pow(f1,2)) * sqrt(pow(freq,2) + pow(f2,2)) *
                                                   sqrt(pow(freq,2) + pow(f3,2)) * (pow(freq,2) + pow(f4,2)))/W1000   ;

@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   main.cpp
  * Author: ags056
  *
@@ -27,13 +27,14 @@ THE SOFTWARE.
 //#include <cstdlib>
 #include "processInWindows.hpp"
 //#include <stdio.h>
+#include <emscripten/bind.h>
 #include <unistd.h>
 
 using namespace std;
 //void loadWav();
 
 /*
- * 
+ *
  */
 int main(int argc, char* argv[]) {
     int testForIO = 0;
@@ -132,7 +133,7 @@ int main(int argc, char* argv[]) {
 
 
     }else
-    {    
+    {
         printf("\n");
         loadWav(in_fname, out_fname, treeDir, gain, frameAve,thresh);
     }
@@ -140,4 +141,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-
