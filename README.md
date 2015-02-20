@@ -1,4 +1,3 @@
-salfordaudio
-============
+Experimental port of wind noise detector to browser using emscripten
 
-Yet-to-be named automated noise detector website for Salford University
+Completely non-functional as of yet
